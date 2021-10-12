@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>WEATHER 360</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- My CSS -->
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/localcss.css') }}" rel="stylesheet">
+    </head>
+    <body>
+        <div class='pageTitle'><img class="pageTitleImg" src="{{ url_for('static', filename='assets/img/main/sun.png') }}"> Weather 360&#176; <img class="pageTitleImg" src="{{ url_for('static', filename='assets/img/main/rain.png') }}"></div>
+        <div class="container">
+        <!-- <p id="">Status</p> -->
+        <p style="text-align: center;">
+        <br><br><button id = "find-me" class="btn btn-danger btn-lg">Get my Coordinates Senpai!</button><br/>
+        </p>
+        <div class="border border-primary" style="text-align: center;">
+        <p id = "status"></p>
+        <a id = "map-link" target="_blank"></a>
+        </div>
+        <!-- </form> -->
+        
+        <div class="form-group">
+        <form method="POST" action="/getweather" >
+            <h2>Enter your location</h2> 
+            <p>(We can grab them for you as it is the most accurate)</p>
+            <input type="text" id="lat" name="lat" class="form-control" placeholder="Latitude" required autofocus><br><br>
+            <input type="text" id="long" name="long" class="form-control" placeholder="Longtitude" required autofocus>
+            <hr>
+            <!-- <h2>Enter your city:</h2> -->
+            <!-- <input type="text" id="inputName" name="city" class="form-control" placeholder="Enter City" required autofocus> -->
+            <button class="btn btn-lg btn-primary btn-block  btn-success" type="submit">Get Weather</button>
+        </form>
+        </div>
+        <p class="disclaimer"><i>Disclaimer: We do NOT share any location data. Location data is solely for the purpose of getting the most accurate weather in your area.</i></p>
+        <!-- <form method="POST" action="/getweather1">
+            
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Get Weather</button>
+        </form> -->
+        
+        <h2>How it works?</h2>
+        <p><b>Weather360</b> featches weather data from many APIs and combines them into a single page.</p>
+        <p>The APIs used are:</p>
+        <ul>
+            <li>ClimateCell</li>
+            <li>Darksky</li>
+            <li>OpenWeatherMap</li>
+            <li>WeatherStack</li>
+        </ul>       
+
+    <!-- End of Container -->
+    </div> 
+        <!-- <script type="text/javascript" src="..\static\javascript\geolocation.js"></script> -->
+        <script type="text/javascript" src="{{ url_for('static', filename='javascript/geolocation.js')}}"></script> 
+        <!-- ..\static\javascript\geolocation.js -->
+    </body>
+</html>

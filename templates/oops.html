@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>WEATHER 360</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- My CSS -->
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/localcss.css') }}" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container" style="text-align: center; padding-top: 50px;">
+        <h1>Oooooops something went wrong!</h1>
+        <h2>Please don't tell anyone and here is a free comic:</h2>
+        <img src="..\static\assets\img\404\lol.jpg" width="500px">
+        </div>
+        
+        <!-- <script type="text/javascript" src="..\static\javascript\geolocation.js"></script> -->
+        <script type="text/javascript" src="{{ url_for('static', filename='javascript/geolocation.js')}}"></script> 
+        <!-- ..\static\javascript\geolocation.js -->
+
+    </body>
+</html>

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      
+<html class="no-js lt-ie9 lt-ie8 lt-ie7">
+   <![endif]-->
+   <!--[if IE 7]>         
+   <html class="no-js lt-ie9 lt-ie8">
+      <![endif]-->
+      <!--[if IE 8]>         
+      <html class="no-js lt-ie9">
+         <![endif]-->
+         <!--[if gt IE 8]><!-->
+         <html class="no-js">
+            <!--<![endif]-->
+            <head>
+               <meta charset="utf-8">
+               <meta http-equiv="X-UA-Compatible" content="IE=edge">
+               <title>WEATHER 360&#176;</title>
+               <meta name="description" content="">
+               <meta name="viewport" content="width=device-width, initial-scale=1">
+               <link rel="stylesheet" href="">
+               <!-- Chartist -->
+               <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+               <!-- My CSS -->
+               <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+               <link href="{{ url_for('static', filename='css/localcss.css') }}" rel="stylesheet">
+               <!-- Chartist JS -->
+               <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+            </head>
+            <body>
+               <div class='pageTitle'><img class="pageTitleImg" src="{{ url_for('static', filename='assets/img/main/sun.png') }}"> Weather 360&#176; <img class="pageTitleImg" src="{{ url_for('static', filename='assets/img/main/rain.png') }}"></div>
+               <div class="container">
+                  <!-- <script type="text/javascript" src="..\static\javascript\geolocation.js"></script> -->
+                  <script type="text/javascript" src="{{ url_for('static',
+                     filename='javascript/geolocation.js')}}"></script>
+                  <!-- ..\static\javascript\geolocation.js -->
+                  <!-- <p class="globalTitle">Calulcated Weather for Today</p> -->
+                  <table class="table">
+                     <tbody>
+                        <!-- <tr>
+                           <td></td>
+                           <td></td>
+                           <td style="text-align: center;">{{weatherStack.wsGeoName}} - {{weatherStack.wsGeoRegion}} - {{weatherStack.wsGeoCountry}}</td>
+                           <td></td>
+                           <td></td>
+                           </tr> -->
+                        <tr>
+                           <td></td>
+                           <td></td>
+                           <td style="text-align: center;"><u>Location:</u> {{accuCityInfo.accuCityName}},
+                              {{accuCityInfo.accuAdministrativeArea}}, {{accuCityInfo.accuCountryName}} - <u>TimeZone (GMT):</u>
+                              {{accuCityInfo.accuTimeZone}}
+                           </td>
+                           <td></td>
+                           <td></td>
+                        </tr>
+                        <tr>
+                           <td></td>
+                           <td></td>
+                           <td style="text-align: center;"><u>Lat:</u>
+                              {{accuCityInfo.accuGeoPositionLat}} - <u>Long:</u>
+                              {{accuCityInfo.accuGeoPositionLong}} - <u>Elevation:</u>
+                              {{accuCityInfo.accuGeoPositionElevation}} m
+                           </td>
+                           <td></td>
+                           <td></td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <!--     accuCityInfo = {
+                     'accuCityName':getCity['LocalizedName'],
+                     'accuCountryName':getCity['Country']['LocalizedName'],
+                     'accuAdministrativeArea':getCity['AdministrativeArea']['LocalizedName'],
+                     'accuTimeZone':getCity['TimeZone']['GmtOffset'],
+                     'accuGeoPositionLat':getCity['GeoPosition']['Latitude'],
+                     'accuGeoPositionLong':getCity['GeoPosition']['Longitude'],
+                     'accuGeoPositionElevation':getCity['GeoPosition']['Elevation']['Metric']['Value']        
+                     } -->
+                  <div style="text-align: center;"><img src="{{weatherStack.wsWeatherIcon}}"></div>
+                  <div id="weatherTitle">
+                     {{darksky.currentSummary}}<br><span class='summaryDaily'>({{darksky.dailySummary}})</span>
+                  </div>
+                  <div class="container calculatedTemp">
+                     <div class="row global">
+                        <div class="col-sm">
+                           <p><span class="globalText"><img src="..\static\assets\img\temp.png" width="60px" title="Temperature" ></span>
+                              <span class="globalTemp">{{globalTemp}}&#8451;</span>
+                           </p>
+                        </div>
+                        <div class="col-sm">
+                           <p><span class="globalText"><img src="..\static\assets\img\humidity.png" width="60px" title="Humidity"></span>
+                              <span class="globalHumidity">{{globalHumidity}}%</span>
+                           </p>
+                        </div>
+                        <div class="col-sm">
+                           <p><span class="globalText"><img src="..\static\assets\img\umbrella.svg" width="60px"
+                              title="Rain Chance"></span> <span class="globalRain">{{globalRainChance}}%</span></p>
+                        </div>
+                     </div>
+                     <div class="row global">
+                        <div class="col-sm">
+                           <p><span class="globalLabel">Air Quality:<br></span>
+                              {{climaCell.ccRealtimeEpaValue}}<br>({{climaCell.ccRealtimeHealthConcern}})
+                           </p>
+                        </div>
+                        <div class="col-sm">
+                           <p><span class="globalLabel">Cloud Cover:<br></span> {{darksky.currentCloudCover}}%</p>
+                        </div>
+                        <div class="col-sm">
+                           <p><span class="globalLabel">Visibility:<br></span> {{weatherStack.wsVisibility}} KM</p>
+                        </div>
+                        <!-- <div class="col-sm">
+                           <p>Moon Phase:  
+                            {% if climaCell.ccRealtimeMoonPhase == 'new_moon'  %} <img src="..\static\assets\img\moon\new_moon.png" width="60px" title="New Moon">{% endif %}
+                            {% if climaCell.ccRealtimeMoonPhase == 'waxing_crescent'  %} <img src="..\static\assets\img\moon\waxing_crescent.png" width="60px" title="New Moon">{% endif %}
+                            {% if climaCell.ccRealtimeMoonPhase == 'waning_crescent'  %} <img src="..\static\assets\img\moon\waning_crescent.png" width="60px" title="New Moon">{% endif %}
+                            {% if climaCell.ccRealtimeMoonPhase == 'first_quarter'  %} <img src="..\static\assets\img\moon\first_quarter.png" width="60px" title="New Moon">{% endif %}
+                            {% if climaCell.ccRealtimeMoonPhase == 'third_quarter'  %} <img src="..\static\assets\img\moon\third_quarter.png" width="60px" title="New Moon">{% endif %}
+                            {% if climaCell.ccRealtimeMoonPhase == 'waxing_gibbous'  %} <img src="..\static\assets\img\moon\waxing_gibbous.png" width="60px" title="New Moon">{% endif %}
+                            {% if climaCell.ccRealtimeMoonPhase == 'waning_gibbous'  %} <img src="..\static\assets\img\moon\waning_gibbous.png" width="60px" title="New Moon">{% endif %}
+                            {% if climaCell.ccRealtimeMoonPhase == 'full_moon'  %} <img src="..\static\assets\img\moon\full_moon.png" width="60px" title="New Moon">{% endif %}
+                           </p>
+                           </div> -->
+                     </div>
+                     <div class="row global">
+                        <div class="col-sm">
+                           <p><span class="globalLabel">Pressure:<br></span> {{weatherStack.wsPressure}} millibar</p>
+                        </div>
+                        <div class="col-sm">
+                           <p></p>
+                        </div>
+                        <div class="col-sm">
+                           <p><span class="globalLabel">Wind:</span><br>{{weatherStack.wsWindSpeed}} (km/h) -
+                              {{weatherStack.wsWindDirection}}
+                           </p>
+                        </div>
+                     </div>
+                     <div class="row global">
+                     </div>
+                     <div class="row global">
+                        <div class="col-sm">
+                           <p><img src="..\static\assets\img\sunrise.png" width="60px" title="Sunrise"> {{darksky.dailySunrise}}</p>
+                        </div>
+                        <div class="col-sm">
+                           <p>
+                              <span class="globalLabel">Moon Phase:<br></span> <!-- {{climaCell.ccRealtimeMoonPhase}} -->
+                              {% if climaCell.ccRealtimeMoonPhase == 'new' %} <img src="..\static\assets\img\moon\new_moon.png"
+                                 width="60px" title="New Moon">{% endif %}
+                              {% if climaCell.ccRealtimeMoonPhase == 'waxing_crescent' %} <img src="..\static\assets\img\moon\waxing_crescent.png" width="60px" title="Waxing Crescent">{% endif %}
+                              {% if climaCell.ccRealtimeMoonPhase == 'waning_crescent' %} <img src="..\static\assets\img\moon\waning_crescent.png" width="60px" title="Waning Crescent">{% endif %}
+                              {% if climaCell.ccRealtimeMoonPhase == 'first_quarter' %} <img src="..\static\assets\img\moon\first_quarter.png" width="60px" title="First Quarter">{% endif %}
+                              {% if climaCell.ccRealtimeMoonPhase == 'third_quarter' %} <img src="..\static\assets\img\moon\third_quarter.png" width="60px" title="Third Quarter">{% endif %}
+                              {% if climaCell.ccRealtimeMoonPhase == 'waxing_gibbous' %} <img src="..\static\assets\img\moon\waxing_gibbous.png" width="60px" title="Waxing Gibbous">{% endif %}
+                              {% if climaCell.ccRealtimeMoonPhase == 'waning_gibbous' %} <img src="..\static\assets\img\moon\waning_gibbous.png" width="60px" title="Waning Gibbous">{% endif %}
+                              {% if climaCell.ccRealtimeMoonPhase == 'full' %} <img src="..\static\assets\img\moon\full_moon.png"
+                                 width="60px" title="Full Moon">{% endif %}
+                           </p>
+                        </div>
+                        <div class="col-sm">
+                           <p><img src="..\static\assets\img\sunset.png" width="60px" title="Sunset"> {{darksky.dailySunset}}</p>
+                        </div>
+                     </div>
+                  </div>
+                  <!-- <table class="table table-bordered table-sm text-center">
+                     <thead>
+                       <tr>
+                         <th style="background-color: #333333; color:#fff8dc;">The Day Ahead</th>
+                         <th><u>Current:</u> {{darksky.currentSummary}}</th>
+                         <th><u>All Day:</u> {{darksky.dailySummary}}</th>
+                       </tr>
+                     </thead>
+                     </table> -->
+                  <!-- <p class="subtitlev1">Current Weather:</p><p class="summary">{{darksky.currentSummary}}</p> -->
+                  <!-- Aggregate Table -->
+                  <p class="subtitlev1">Right Now</p>
+                  <table class="table table-borderless">
+                     <thead>
+                        <tr>
+                           <th><u>Source</u></th>
+                           <th><u>DarkSky</u></th>
+                           <th><u>ClimaCell</u></th>
+                           <th><u>WeatherStack</u></th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td class="temp customTable">Temperature (&#8451;) [Feels Like]</td>
+                           <td>{{darksky.currentTemperature}}</td>
+                           <td>{{climaCell.ccRealtimeTemp}} <b>[{{climaCell.ccRealtimeFeelsLike}}]</b></td>
+                           <td>{{weatherStack.wsTemperature}} <b>[{{weatherStack.wsFeelsLike}}]</b></td>
+                        </tr>
+                        <tr>
+                           <td class="humidity customTable"><img src="..\static\assets\img\humidity.png" width="30px" title="Humidity">
+                              Humidity
+                           </td>
+                           <td>{{darksky.currentHumidity}}%</td>
+                           <td>{{climaCell.ccRealtimeHumidity}}%</td>
+                           <td>{{weatherStack.wsHumidity}}%</td>
+                        </tr>
+                        <tr>
+                           <td class="customTable"><img src="..\static\assets\img\wind.png" width="30px" title="Wind Speed"> Wind (Gust)
+                           </td>
+                           <td>{{darksky.currentWindSpeed}}m/s ({{darksky.currentWindGust}}m/s)</td>
+                           <td>{{climaCell.ccRealtimeWindSpeed}}m/s</td>
+                           <td>{{weatherStack.wsWindSpeed}} <b>kph</b> -
+                              {{weatherStack.wsWindDirection}} 
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="rain customTable"><img src="..\static\assets\img\umbrella.svg" width="30px" title="Rain"> Rain</td>
+                           <td>Chance: {{darksky.currentRainChance}}% ({{darksky.currentRainType}})</td>
+                           <td>{{climaCell.ccRealtimePrecipitation}} mm</td>
+                           <td>{{weatherStack.wsPrecipitation}} mm</td>
+                        </tr>
+                        <tr>
+                           <td class="customTable"><img src="..\static\assets\img\uv.png" width="30px" title="UV Index"> UV</td>
+                           <td>
+                              {% if darksky.currentuvIndex <= 2 %} <span class="lowIndex">{{darksky.currentuvIndex}} (Low)</span>{% endif
+                              %}
+                              {% if darksky.currentuvIndex > 2 and darksky.currentuvIndex <=5 %} <span class="mediumIndex">
+                              {{darksky.currentuvIndex}} (Medium)</span>{% endif %}
+                              {% if darksky.currentuvIndex > 5 and darksky.currentuvIndex <=7 %} <span class="highIndex">
+                              {{darksky.currentuvIndex}} (High)</span>{% endif %}
+                              {% if darksky.currentuvIndex > 7 and darksky.currentuvIndex <=10 %} <span class="veryHighIndex">
+                              {{darksky.currentuvIndex}} (Very High)</span>{% endif %}
+                              {% if darksky.currentuvIndex > 10 %} <span class="extremelyHighIndex">{{darksky.currentuvIndex}}
+                              (Extremely High)</span>{% endif %}
+                           </td>
+                           <td>
+                              {% if weatherStack.wsUVIndex <= 2 %} <span class="lowIndex">{{weatherStack.wsUVIndex}} (Low)</span>{% endif
+                              %}
+                              {% if weatherStack.wsUVIndex > 2 and weatherStack.wsUVIndex <=5 %} <span class="mediumIndex">
+                              {{weatherStack.wsUVIndex}} (Medium)</span>{% endif %}
+                              {% if weatherStack.wsUVIndex > 5 and weatherStack.wsUVIndex <=7 %} <span class="highIndex">
+                              {{weatherStack.wsUVIndex}} (High)</span>{% endif %}
+                              {% if weatherStack.wsUVIndex > 7 and weatherStack.wsUVIndex <=10 %} <span class="veryHighIndex">
+                              {{weatherStack.wsUVIndex}} (Very High)</span>{% endif %}
+                              {% if weatherStack.wsUVIndex > 10 %} <span class="extremelyHighIndex">{{weatherStack.wsUVIndex}}
+                              (Extremely High)</span>{% endif %}
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <hr>
+                  <p class="subtitlev1">Day Summary</p>
+                  <table class="table table-striped table-borderless">
+                     <thead>
+                        <tr>
+                           <th scope="col">Time</th>
+                           <th scope="col">Summary</th>
+                           <th scope="col" class="temp">Temp (&#8451;)</th>
+                           <th scope="col" class="humidity"><img src="..\static\assets\img\humidity.png" width="30px" title="Humidity">
+                           </th>
+                           <th scope="col"><img src="..\static\assets\img\wind.png" width="30px" title="Wind Speed">(m/s)</th>
+                           <th scope="col">Wind Gust</th>
+                           <th scope="col"><img src="..\static\assets\img\uv.png" width="30px" title="UV Index"></th>
+                           <th scope="col" class="rain"><img src="..\static\assets\img\umbrella.svg" width="30px" title="Rain
+                              Chance"></th>
+                           <th scope="col" class="rain">Rain Type</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td><span class="timeperiod">Early Morning</span></td>
+                           <td>{{darksky.hourlySummaryH1}}</td>
+                           <td>{{darksky.hourlyTemperatureH1}}</td>
+                           <td>{{darksky.hourlyHumidityH1}}%</td>
+                           <td>{{darksky.hourlyWindSpeedH1}}</td>
+                           <td>{{darksky.hourlyWindGustH1}}</td>
+                           <td>{{darksky.hourlyuvIndexH1}}</td>
+                           <td>{{darksky.hourlyRainChanceH1}}%</td>
+                           <td>{{darksky.hourlyRainTypeH1}}</td>
+                        </tr>
+                        <tr>
+                           <td><span class="timeperiod">Morning</span></td>
+                           <td>{{darksky.hourlySummaryH2}}</td>
+                           <td>{{darksky.hourlyTemperatureH2}}</td>
+                           <td>{{darksky.hourlyHumidityH2}}%</td>
+                           <td>{{darksky.hourlyWindSpeedH2}}</td>
+                           <td>{{darksky.hourlyWindGustH2}}</td>
+                           <td>{{darksky.hourlyuvIndexH2}}</td>
+                           <td>{{darksky.hourlyRainChanceH2}}%</td>
+                           <td>{{darksky.hourlyRainTypeH2}}</td>
+                        </tr>
+                        <tr>
+                           <td><span class="timeperiod">Afternoon</span></td>
+                           <td>{{darksky.hourlySummaryH3}}</td>
+                           <td>{{darksky.hourlyTemperatureH3}}</td>
+                           <td>{{darksky.hourlyHumidityH3}}%</td>
+                           <td>{{darksky.hourlyWindSpeedH3}}</td>
+                           <td>{{darksky.hourlyWindGustH3}}</td>
+                           <td>{{darksky.hourlyuvIndexH3}}</td>
+                           <td>{{darksky.hourlyRainChanceH3}}%</td>
+                           <td>{{darksky.hourlyRainTypeH3}}</td>
+                        </tr>
+                        <tr>
+                           <td><span class="timeperiod">Evening</span></td>
+                           <td>{{darksky.hourlySummaryH4}}</td>
+                           <td>{{darksky.hourlyTemperatureH4}}</td>
+                           <td>{{darksky.hourlyHumidityH4}}%</td>
+                           <td>{{darksky.hourlyWindSpeedH4}}</td>
+                           <td>{{darksky.hourlyWindGustH4}}</td>
+                           <td>{{darksky.hourlyuvIndexH4}}</td>
+                           <td>{{darksky.hourlyRainChanceH4}}%</td>
+                           <td>{{darksky.hourlyRainTypeH4}}</td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <p class="subtitlev1">All Day</p>
+                  </p>
+                  <table class="table table-borderless">
+                     <thead>
+                        <tr>
+                           <!-- <th scope="col">Summary</th> -->
+                           <th scope="col" class="temp">Min (&#8451;)</th>
+                           <th scope="col" class="temp">Max (&#8451;)</th>
+                           <th scope="col" class="humidity"><img src="..\static\assets\img\humidity.png" width="30px" title="Humidity">
+                           </th>
+                           <th scope="col"><img src="..\static\assets\img\wind.png" width="30px" title="Wind Speed">(m/s)</th>
+                           <th scope="col">Wind Gust</th>
+                           <th scope="col" class="rain"><img src="..\static\assets\img\umbrella.svg" width="30px" title="Rain
+                              Chance"></th>
+                           <th scope="col" class="rain">Rain Type</th>
+                           <th scope="col">Dewpoint (&#8451;)</th>
+                           <th scope="col">Cloud Cover</th>
+                           <!-- <th scope="col">Moon Phase</th> -->
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <!-- <td>{{darksky.dailySummary}}</td> -->
+                           <td>{{darksky.dailyTempLow}}</td>
+                           <td>{{darksky.dailyTempHigh}}</td>
+                           <td>{{darksky.dailyHumidity}}%</td>
+                           <td>{{darksky.dailyWindSpeed}}</td>
+                           <td>{{darksky.dailyWindGust}}</td>
+                           <td>{{darksky.dailyRainChance}}%</td>
+                           <td>{{darksky.dailyRainType}}</td>
+                           <td>{{darksky.dailyDewPoint}}</td>
+                           <td>{{darksky.dailyCloudCover}}%</td>
+                           <!-- <td>{{darksky.dailyMoonPhase}}</td> -->
+                        </tr>
+                     </tbody>
+                  </table>
+                  <hr>
+                  <p class="subtitlev1">Forecast</p>
+                  <p class="source">Source: OpenWeather</p>
+                  <table class="table table-striped table-borderless table-sm">
+                     <thead>
+                        <tr>
+                           <th scope="col">Date</th>
+                           <th scope="col" class="temp">Temp (&#8451;)</th>
+                           <!-- <th scope="col" class="temp">Min (&#8451;)</th> -->
+                           <!-- <th scope="col" class="temp">Max (&#8451;)</th> -->
+                           <th scope="col" class="humidity"><img src="..\static\assets\img\humidity.png" width="30px" title="Humidity">
+                           </th>
+                           <th scope="col">Weather</th>
+                           <th scope="col">Weather Description</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {%for i in range(lenOpenWeather)%}
+                        <tr>
+                           <th scope="row" class="dates">{{openWeatherList[i].EpochDate}}</th>
+                           <td>{{openWeatherList[i].Temp}} </td>
+                           <!-- <td>{{openWeatherList[i].MinTemp}} </td> -->
+                           <!-- <td>{{openWeatherList[i].MaxTemp}}</td> -->
+                           <td>{{openWeatherList[i].Humidity}}% </td>
+                           <!-- <td>{{openWeatherList[i].Weather}} </td> -->
+                           <td>
+                              {% if openWeatherList[i].Weather == "Rain" or
+                              openWeatherList[i].Weather == "Snow" or openWeatherList[i].Weather
+                              == "Drizzle" %}<span class='rain'>{{openWeatherList[i].Weather}}</span>{%
+                              endif %}
+                              {% if openWeatherList[i].Weather == "Clouds" %}<span class='cloud'>{{openWeatherList[i].Weather}}</span>{%
+                              endif %}
+                              {% if openWeatherList[i].Weather == "Clear" %}<span class='clear'>{{openWeatherList[i].Weather}}</span>{%
+                              endif %}
+                           </td>
+                           <!-- <td>{{openWeatherList[i].Weather}}</td> -->
+                           <td>{{openWeatherList[i].WeatherDescription}}</td>
+                        </tr>
+                        {%endfor%}
+                     </tbody>
+                  </table>
+                  <p class="source">Source: ClimaCell</p>
+                  <table class="table table-striped table-borderless table-sm">
+                     <thead>
+                        <tr>
+                           <th scope="col">Day</th>
+                           <th scope="col" class="temp">Feels Like (&#8451;)</th>
+                           <th scope="col" class="rain">Precipitation</th>
+                           <th scope="col"><img src="..\static\assets\img\wind.png" width="30px" title="Wind Speed"></th>
+                           <th scope="col">Moon Phase</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <th scope="row" class="dates">{{climaCell.ccDay1ObservationTime}}</th>
+                           <td>{{climaCell.ccDay1FeelsLike}}</td>
+                           <td>{{climaCell.ccDay1Precip}} </td>
+                           <td>{{climaCell.ccDay1WindSpeed}}</td>
+                           <td>{{climaCell.ccDay1MoonPhase}}</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{climaCell.ccDay2ObservationTime}}</th>
+                           <td>{{climaCell.ccDay2FeelsLike}}</td>
+                           <td>{{climaCell.ccDay2Precip}} </td>
+                           <td>{{climaCell.ccDay2WindSpeed}}</td>
+                           <td>{{climaCell.ccDay2MoonPhase}}</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{climaCell.ccDay3ObservationTime}}</th>
+                           <td>{{climaCell.ccDay3FeelsLike}}</td>
+                           <td>{{climaCell.ccDay3Precip}} </td>
+                           <td>{{climaCell.ccDay3WindSpeed}}</td>
+                           <td>{{climaCell.ccDay3MoonPhase}}</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{climaCell.ccDay4ObservationTime}}</th>
+                           <td>{{climaCell.ccDay4FeelsLike}}</td>
+                           <td>{{climaCell.ccDay4Precip}} </td>
+                           <td>{{climaCell.ccDay4WindSpeed}}</td>
+                           <td>{{climaCell.ccDay4MoonPhase}}</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{climaCell.ccDay5ObservationTime}}</th>
+                           <td>{{climaCell.ccDay5FeelsLike}}</td>
+                           <td>{{climaCell.ccDay5Precip}} </td>
+                           <td>{{climaCell.ccDay5WindSpeed}}</td>
+                           <td>{{climaCell.ccDay5MoonPhase}}</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{climaCell.ccDay6ObservationTime}}</th>
+                           <td>{{climaCell.ccDay6FeelsLike}}</td>
+                           <td>{{climaCell.ccDay6Precip}} </td>
+                           <td>{{climaCell.ccDay6WindSpeed}}</td>
+                           <td>{{climaCell.ccDay6MoonPhase}}</td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <!-- Charting -->
+                  <h1>Temp Forecast</h1>
+                  <div class="ct-chart ct-series-a ct-line" id="chartTemp">
+                  </div>
+                  <h1>Humidity Forecast</h1>
+                  <div class="ct-chart" id="chartHumidty">
+                  </div>
+                  <!-- bootstrap container -->
+                  <hr>
+                  <hr>
+                  <hr>
+                  <hr>
+                  <hr>
+                  <table class="table table-borderless">
+                     <thead>
+                        <tr>
+                           <th scope="col" class="temp">Temp (&#8451;)</th>
+                           <th scope="col" class="humidity"><img src="..\static\assets\img\humidity.png" width="30px" title="Humidity">
+                           </th>
+                           <th scope="col"><img src="..\static\assets\img\wind.png" width="30px" title="Wind Speed">(m/s)</th>
+                           <!-- Wind Speed-->
+                           <th scope="col">Wind Gust</th>
+                           <th scope="col"><img src="..\static\assets\img\uv.png" width="30px" title="UV Index"></th>
+                           <!--UV Index-->
+                           <th scope="col" class="rain"><img src="..\static\assets\img\umbrella.svg" width="30px" title="Rain
+                              Chance"></th>
+                           <th scope="col" class="rain">Rain Type</th>
+                           <th scope="col">Cloud Cover</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td>{{darksky.currentTemperature}}</td>
+                           <td>{{darksky.currentHumidity}}%</td>
+                           <td>{{darksky.currentWindSpeed}}</td>
+                           <td>{{darksky.currentWindGust}}</td>
+                           <td>{{darksky.currentuvIndex}}</td>
+                           <td>{{darksky.currentRainChance}}%</td>
+                           <td>{{darksky.currentRainType}}</td>
+                           <td>{{darksky.currentCloudCover}}%</td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <p class="source">Source: ClimaCell (Realtime)</p>
+                  <table class="table table-borderless">
+                     <thead>
+                        <tr>
+                           <th scope="col" class="temp">Temp (&#8451;)</th>
+                           <th scope="col" class="temp">Feels Like (&#8451;)</th>
+                           <th scope="col" class="humidity"><img src="..\static\assets\img\humidity.png" width="30px" title="Humidity">
+                           </th>
+                           <th scope="col"><img src="..\static\assets\img\wind.png" width="30px" title="Wind Speed">(m/s)</th>
+                           <th scope="col" class="rain">Precipitation</th>
+                           <th scope="col">Dewpoint (&#8451;)</th>
+                           <!-- <th scope="col">Air Quality</th> -->
+                           <!-- <th scope="col">Health Concern</th> -->
+                           <th scope="col">Weather</th>
+                           <!-- <th scope="col">Moon</th> -->
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <!-- <th scope="row">Today</th> -->
+                           <td>{{climaCell.ccRealtimeTemp}}</td>
+                           <td>{{climaCell.ccRealtimeFeelsLike}}</td>
+                           <td>{{climaCell.ccRealtimeHumidity}}%</td>
+                           <td>{{climaCell.ccRealtimeWindSpeed}}</td>
+                           <td>{{climaCell.ccRealtimePrecipitation}} mm</td>
+                           <td>{{climaCell.ccRealtimeDewPoint}}</td>
+                           <!-- <td>{{climaCell.ccRealtimeEpaValue}}</td> -->
+                           <!-- <td>{{climaCell.ccRealtimeHealthConcern}}</td> -->
+                           <td>{{climaCell.ccRealtimeWeatherCode}}</td>
+                           <!-- <td>{{climaCell.ccRealtimeMoonPhase}}</td> -->
+                        </tr>
+                     </tbody>
+                  </table>
+                  <hr>
+                  <p class="source">Source: WeatherStack (Realtime)</p>
+                  <table class="table table-borderless">
+                     <thead>
+                        <tr>
+                           <!-- <th scope="col">Date</th> -->
+                           <!-- <th scope="col">Summary</th> -->
+                           <th scope="col" class="temp">Temp (&#8451;)</th>
+                           <th scope="col" class="temp">Feels Like (&#8451;)</th>
+                           <th scope="col" class="humidity"><img src="..\static\assets\img\humidity.png" width="30px" title="Humidity">
+                           </th>
+                           <th scope="col"><img src="..\static\assets\img\wind.png" width="30px" title="Wind Speed"></th>
+                           <!-- <th scope="col">Wind Drection</th> -->
+                           <th scope="col" class="rain"><img src="..\static\assets\img\umbrella.svg" width="30px" title="Rain
+                              Chance"></th>
+                           <th scope="col">Pressure</th>
+                           <th scope="col">Cloud Cover</th>
+                           <th scope="col"><img src="..\static\assets\img\uv.png" width="30px" title="UV Index"></th>
+                           <th scope="col">Visibility</th>
+                           <th scope="col">Name</th>
+                           <!-- <th scope="col">Country</th>
+                              <th scope="col">Region</th>
+                              <th scope="col">Graphic</th> -->
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <!-- <th scope="row">Today</th> -->
+                           <!-- <td>{{weatherStack.wsWeatherDescription}}</td> -->
+                           <td>{{weatherStack.wsTemperature}}</td>
+                           <td>{{weatherStack.wsFeelsLike}}</td>
+                           <td>{{weatherStack.wsHumidity}}%</td>
+                           <td>{{weatherStack.wsWindSpeed}} - {{weatherStack.wsWindDirection}}
+                           </td>
+                           <!-- <td>{{weatherStack.wsWindDirection}}</td> -->
+                           <td>{{weatherStack.wsPrecipitation}} mm</td>
+                           <td>{{weatherStack.wsPressure}}</td>
+                           <td>{{weatherStack.wsCloudCover}}%</td>
+                           <td>{{weatherStack.wsUVIndex}}</td>
+                           <td>{{weatherStack.wsVisibility}} KM</td>
+                           <!-- <td>{{weatherStack.wsGeoName}}</td>
+                              <td>{{weatherStack.wsGeoCountry}}</td>
+                              <td>{{weatherStack.wsGeoRegion}}</td> -->
+                           <td><img src="{{weatherStack.wsWeatherIcon}}"></td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <p class="source">Source: OpenWeather</p>
+                  <table class="table table-striped table-borderless table-sm">
+                     <thead>
+                        <tr>
+                           <th scope="col">Date</th>
+                           <th scope="col">Weather</th>
+                           <th scope="col">Weather Description</th>
+                           <th scope="col" class="temp">Temp (&#8451;)</th>
+                           <!-- <th scope="col" class="temp">Min (&#8451;)</th> -->
+                           <!-- <th scope="col" class="temp">Max (&#8451;)</th> -->
+                           <th scope="col" class="humidity"><img src="..\static\assets\img\humidity.png" width="30px" title="Humidity">
+                           </th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <th scope="row" class="dates">{{openWeatherMap.day1Date}}</th>
+                           <td>{{openWeatherMap.day1Weather}}</td>
+                           <td>{{openWeatherMap.day1WeatherDescription}}</td>
+                           <td>{{openWeatherMap.day1Temp}}</td>
+                           <!-- <td>{{openWeatherMap.day1Min}}</td> -->
+                           <!-- <td>{{openWeatherMap.day1Max}}</td> -->
+                           <td>{{openWeatherMap.day1Humidity}}%</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{openWeatherMap.day2Date}}</th>
+                           <td>{{openWeatherMap.day2Weather}}</td>
+                           <td>{{openWeatherMap.day2WeatherDescription}}</td>
+                           <td>{{openWeatherMap.day2Temp}}</td>
+                           <!-- <td>{{openWeatherMap.day2Min}}</td> -->
+                           <!-- <td>{{openWeatherMap.day2Max}}</td> -->
+                           <td>{{openWeatherMap.day2Humidity}}%</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{openWeatherMap.day3Date}}</th>
+                           <td>{{openWeatherMap.day3Weather}}</td>
+                           <td>{{openWeatherMap.day3WeatherDescription}}</td>
+                           <td>{{openWeatherMap.day3Temp}}</td>
+                           <!-- <td>{{openWeatherMap.day3Min}}</td> -->
+                           <!-- <td>{{openWeatherMap.day3Max}}</td> -->
+                           <td>{{openWeatherMap.day3Humidity}}%</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{openWeatherMap.day4Date}}</th>
+                           <td>{{openWeatherMap.day4Weather}}</td>
+                           <td>{{openWeatherMap.day4WeatherDescription}}</td>
+                           <td>{{openWeatherMap.day4Temp}}</td>
+                           <!-- <td>{{openWeatherMap.day4Min}}</td> -->
+                           <!-- <td>{{openWeatherMap.day4Max}}</td> -->
+                           <td>{{openWeatherMap.day4Humidity}}%</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{openWeatherMap.day5Date}}</th>
+                           <td>{{openWeatherMap.day5Weather}}</td>
+                           <td>{{openWeatherMap.day5WeatherDescription}}</td>
+                           <td>{{openWeatherMap.day5Temp}}</td>
+                           <!-- <td>{{openWeatherMap.day5Min}}</td> -->
+                           <!-- <td>{{openWeatherMap.day5Max}}</td> -->
+                           <td>{{openWeatherMap.day5Humidity}}%</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{openWeatherMap.day6Date}}</th>
+                           <td>{{openWeatherMap.day6Weather}}</td>
+                           <td>{{openWeatherMap.day6WeatherDescription}}</td>
+                           <td>{{openWeatherMap.day6Temp}}</td>
+                           <!-- <td>{{openWeatherMap.day6Min}}</td> -->
+                           <!-- <td>{{openWeatherMap.day6Max}}</td> -->
+                           <td>{{openWeatherMap.day6Humidity}}%</td>
+                        </tr>
+                        <tr>
+                           <th scope="row" class="dates">{{openWeatherMap.day7Date}}</th>
+                           <td>{{openWeatherMap.day7Weather}}</td>
+                           <td>{{openWeatherMap.day7WeatherDescription}}</td>
+                           <td>{{openWeatherMap.day7Temp}}</td>
+                           <!-- <td>{{openWeatherMap.day7Min}}</td> -->
+                           <!-- <td>{{openWeatherMap.day7Max}}</td> -->
+                           <td>{{openWeatherMap.day7Humidity}}%</td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <hr>
+               </div>
+            </body>
+            <script>
+               var data1 = {
+                 // A labels array that can contain any sort of values
+                 // labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                 labels: [
+                   '{{openWeatherList[0].EpochDate}}', '{{openWeatherList[1].EpochDate}}', '{{openWeatherList[2].EpochDate}}',
+                   '{{openWeatherList[3].EpochDate}}', '{{openWeatherList[4].EpochDate}}', '{{openWeatherList[5].EpochDate}}',
+                   '{{openWeatherList[6].EpochDate}}', '{{openWeatherList[7].EpochDate}}', '{{openWeatherList[8].EpochDate}}',
+                   '{{openWeatherList[9].EpochDate}}', '{{openWeatherList[10].EpochDate}}', '{{openWeatherList[11].EpochDate}}',
+                   '{{openWeatherList[12].EpochDate}}', '{{openWeatherList[13].EpochDate}}', '{{openWeatherList[14].EpochDate}}',
+                   '{{openWeatherList[15].EpochDate}}', '{{openWeatherList[16].EpochDate}}', '{{openWeatherList[17].EpochDate}}',
+                   '{{openWeatherList[18].EpochDate}}', '{{openWeatherList[19].EpochDate}}',
+                 ],
+                 // Our series array that contains series objects or in this case series data arrays
+                 // series: [
+                 // [5, 2, 4, 2, 0]
+                 // ]
+                 series: [
+                   [
+                     '{{openWeatherList[0].Temp}}', '{{openWeatherList[1].Temp}}', '{{openWeatherList[2].Temp}}',
+                     '{{openWeatherList[3].Temp}}', '{{openWeatherList[4].Temp}}', '{{openWeatherList[5].Temp}}',
+                     '{{openWeatherList[6].Temp}}', '{{openWeatherList[7].Temp}}', '{{openWeatherList[8].Temp}}',
+                     '{{openWeatherList[9].Temp}}', '{{openWeatherList[10].Temp}}', '{{openWeatherList[11].Temp}}',
+                     '{{openWeatherList[12].Temp}}', '{{openWeatherList[13].Temp}}', '{{openWeatherList[14].Temp}}',
+                     '{{openWeatherList[15].Temp}}', '{{openWeatherList[16].Temp}}', '{{openWeatherList[17].Temp}}',
+                     '{{openWeatherList[18].Temp}}', '{{openWeatherList[19].Temp}}',
+                   ],
+                 ]
+               
+               
+               };
+               var data2 = {
+                 // A labels array that can contain any sort of values
+                 // labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                 labels: [
+                   '{{openWeatherList[0].EpochDate}}', '{{openWeatherList[1].EpochDate}}', '{{openWeatherList[2].EpochDate}}',
+                   '{{openWeatherList[3].EpochDate}}', '{{openWeatherList[4].EpochDate}}', '{{openWeatherList[5].EpochDate}}',
+                   '{{openWeatherList[6].EpochDate}}', '{{openWeatherList[7].EpochDate}}', '{{openWeatherList[8].EpochDate}}',
+                   '{{openWeatherList[9].EpochDate}}', '{{openWeatherList[10].EpochDate}}', '{{openWeatherList[11].EpochDate}}',
+                   '{{openWeatherList[12].EpochDate}}', '{{openWeatherList[13].EpochDate}}', '{{openWeatherList[14].EpochDate}}',
+                   '{{openWeatherList[15].EpochDate}}', '{{openWeatherList[16].EpochDate}}', '{{openWeatherList[17].EpochDate}}',
+                   '{{openWeatherList[18].EpochDate}}', '{{openWeatherList[19].EpochDate}}',
+                 ],
+               
+                 series: [
+                   [
+                     '{{openWeatherList[0].Humidity}}', '{{openWeatherList[1].Humidity}}', '{{openWeatherList[2].Humidity}}',
+                     '{{openWeatherList[3].Humidity}}', '{{openWeatherList[4].Humidity}}', '{{openWeatherList[5].Humidity}}',
+                     '{{openWeatherList[6].Humidity}}', '{{openWeatherList[7].Humidity}}', '{{openWeatherList[8].Humidity}}',
+                     '{{openWeatherList[9].Humidity}}', '{{openWeatherList[10].Humidity}}', '{{openWeatherList[11].Humidity}}',
+                     '{{openWeatherList[12].Humidity}}', '{{openWeatherList[13].Humidity}}', '{{openWeatherList[14].Humidity}}',
+                     '{{openWeatherList[15].Humidity}}', '{{openWeatherList[16].Humidity}}', '{{openWeatherList[17].Humidity}}',
+                     '{{openWeatherList[18].Humidity}}', '{{openWeatherList[19].Humidity}}',
+                   ]
+                 ]
+               };
+               
+               
+               var options1 = {
+                 width: 1200,
+                 height: 300
+               };
+               
+               // Create a new line chart object where as first parameter we pass in a selector
+               // that is resolving to our chart container element. The Second parameter
+               // is the actual data object.
+               new Chartist.Line('#chartTemp', data1, options1);
+               new Chartist.Line('#chartHumidty', data2, options1);
+               
+            </script>
+         </html>
